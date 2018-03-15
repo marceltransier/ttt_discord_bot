@@ -7,28 +7,22 @@ var guild, channel;
 var loggedin = false;
 var lastupdate;
 
+//create discord client
 const client = new Discord.Client();
-client.on('ready', () => {
-	log('Ready!');
+client.login(config.discord.token);
 
+client.on('ready', () => {
+	log('Bot is ready! :)');
 	guild = client.guilds.find('id',config.discord.guild);
 	channel = guild.channels.find('id',config.discord.channel);
 
 	loggedin = true;
-	databaseChanged();
-
-
+	update();
 });
-
-client.on('voiceStateUpdate',(oldMember,newMember) => {
-	if (oldMember.voiceChannel != newMember.voiceChannel)
-		databaseChanged()
+client.on('voiceStateUpdate',(oldMember,newMember) => {//when a user joins or leaves the voice channel, the update() function will be called
+	if (oldMember.voiceChannel != newMember.voiceChannel && (oldMember.voiceChannelID == config.discord.channel || newMember.voiceChannelID == config.discord.channel))
+		update()
 });
-
-
-client.login(config.discord.token);
-
-
 
 
 //create mysql pool
@@ -55,25 +49,21 @@ function checkDatabase() {
 	mysql('select time from updated', res => {
 		if (res[0].time != lastupdate) {
 			lastupdate = res[0].time;
-			databaseChanged();
+			update();
 		}
 		setTimeout(checkDatabase, config.check_frequency);
 	});
 }
 
-function databaseChanged() {// fun unbenennen
-	debug("change!");
+function update() {//when the database has been updated or a user joined the channel, this function will check if the user should be muted or not
 	if (!loggedin) return;
-	debug("loggedin");
 
 	let members = channel.members.array();
 
 	mysql('select nick from dead',resDead => {
 		mysql('select id from muted',resMuted => {
-			debug("got mysql result");
 			for (row in resMuted) {//unmute if not more in dead table or voice channel
 				let id = resMuted[row].id;
-				debug("resMuted - id: "+id);
 
 				let user = guild.members.find('id',id);
 				let nick = user.nickname;
@@ -84,7 +74,6 @@ function databaseChanged() {// fun unbenennen
 			}
 			for (row in resDead) {//mute if in dead table and in voice channel
 				let nick = resDead[row].nick;
-				debug("resDead - nick: "+nick);
 
 				let user = guild.members.find('nickname',nick);
 				let isInChannel = contains(members,nick,"nickname");
@@ -125,7 +114,7 @@ function debug(str) {
 	if (config.debug) log(str);
 }
 
-function muteUser(user,mute) {
+function muteUser(user,mute) {//mute / unmute user and insert or delete userid from muted table. the muted table is needed to check whether a user (regardless of his current nickname) is muted by this bot and should get unmutet when he quit the voice channel
 	user.setMute(mute,"dead players cant talk!")
 	.then(() => {
 		if (mute)
