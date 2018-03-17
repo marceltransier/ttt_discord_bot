@@ -17,7 +17,8 @@ db = mysqloo.connect(config.mysql.host, config.mysql.user, config.mysql.password
 db:connect()
 
 function db:onConnected()
-    addHooks()--add hooks after connected because the call the update function wich needs the mysql connection
+    db:query("create table if not exists dead (nick varchar(255));create table if not exists muted (id varchar(255))"):start()--create tables if not exists
+    addHooks()--add hooks after connected because the call the update function which needs the mysql connection
 end
 function db:onConnectionFailed( err )
     print( "ttt_discord_bot: Connection to database failed!" )
