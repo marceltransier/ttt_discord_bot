@@ -25,7 +25,7 @@ You have to have allready installed a Garry's Mod Server with the TTT Gamemode
      mv config-template.json config.json
      ```
 
-3. Create Discord Bot and paste the token in the config
+3. Create Discord Bot, invite him to your server and paste the token in the config
 
    - if you don't know how to, follow [this guide](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
    
@@ -70,3 +70,6 @@ You have to have allready installed a Garry's Mod Server with the TTT Gamemode
      node ./discord_bot
      ```
    - start your Garry's Mod server
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
