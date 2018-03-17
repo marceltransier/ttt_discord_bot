@@ -1,0 +1,13 @@
+{
+  "discord": {
+    "token": "",
+    "guild": "",
+    "channel": ""
+  },
+  "mysql": {
+    "host": "",
+    "user": "",
+    "password": "",
+    "database": ""
+  }
+}

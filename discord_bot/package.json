@@ -1,0 +1,29 @@
+{
+  "name": "discord_bot",
+  "version": "1.0.0",
+  "description": "the discord bot part of the ttt_discord_bot",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^11.3.2",
+    "mysql": "^2.15.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marceltransier/ttt_discord_bot.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "ttt"
+  ],
+  "author": "Marcel Transier",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/marceltransier/ttt_discord_bot/issues"
+  },
+  "homepage": "https://github.com/marceltransier/ttt_discord_bot#readme"
+}

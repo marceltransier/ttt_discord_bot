@@ -1,15 +1,13 @@
 {
   "discord": {
-    "token": "",
-    "guild": "",
-    "channel": ""
+    "token": "gfOrUllv6.WA8UbDyM0eHiIDNBoCbkf8nbyZ.lszE47KAIC5ObfW5P43mOq",
+    "guild": "234567890123456789",
+    "channel": "123456789012345678"
   },
   "mysql": {
     "host": "localhost",
     "user": "ttt_discord_bot",
-    "password": "",
+    "password": "examplePassword",
     "database": "db_ttt_discord_bot"
-  },
-  "check_frequency": 100,
-  "debug": true
+  }
 }

@@ -51,7 +51,7 @@ function checkDatabase() {
 			lastupdate = res[0].time;
 			update();
 		}
-		setTimeout(checkDatabase, config.check_frequency);
+		setTimeout(checkDatabase, 100);
 	});
 }
 
@@ -110,9 +110,6 @@ function contains(array,entry,property=null) {
 	return false;
 }
 
-function debug(str) {
-	if (config.debug) log(str);
-}
 
 function muteUser(user,mute) {//mute / unmute user and insert or delete userid from muted table. the muted table is needed to check whether a user (regardless of his current nickname) is muted by this bot and should get unmutet when he quit the voice channel
 	user.setMute(mute,"dead players cant talk!")
