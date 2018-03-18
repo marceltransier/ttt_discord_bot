@@ -2,7 +2,7 @@
 ![downloads](https://img.shields.io/github/downloads/marceltransier/ttt_discord_bot/total.svg)
 ![license](https://img.shields.io/github/license/marceltransier/ttt_discord_bot.svg)
 
-A [Discord-Bot](https://discord.js.org) that mutes dead players in [TTT](http://ttt.badking.net/) so they cant tell the others who the murderer is. :mute:
+A [Discord-Bot](https://discord.js.org) that mutes dead players in [TTT](http://ttt.badking.net/) so they can't tell the others who the murderer is. :mute:
 
 ![Icon](images/icon/icon_64x.png)
 
@@ -15,14 +15,14 @@ You have to have allready installed a Garry's Mod Server with the TTT Gamemode
 ### Installation
 1. Clone this repository
 
-   - copy this repository to your addons folder (.../garrysmod/addons) and navigate to it
+   - copy this repository to your addons folder (`garrysmod/addons`) and navigate to it
      ```bash
      git clone https://github.com/marceltransier/ttt_discord_bot.git
      cd ttt_discord_bot
      ```
 2. Create config.json
 
-   - rename the config-template.json to config.json
+   - rename the `config-template.json` to `config.json`
      ```bash
      mv config-template.json config.json
      ```
@@ -31,7 +31,7 @@ You have to have allready installed a Garry's Mod Server with the TTT Gamemode
 
    - if you don't know how to, follow [this guide](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
    
-   - insert the bot token at discord -> token in the config.json
+   - insert the bot token at `discord -> token` in the config.json
    
 4. Insert the Guild (Server) id and the channel id in the config
 
@@ -66,18 +66,17 @@ You have to have allready installed a Garry's Mod Server with the TTT Gamemode
      npm install --prefix ./discord_bot
      ```
 
-8. Run it finally! :muscle:
-   - first start the bot
-     ```bash
-     node ./discord_bot
-     ```
-   - start your Garry's Mod server
-
 ### Usage
-To start the bot navigate to your garrysmod directory and run
+To start the bot run node with the `discord_bot` directory
 ```bash
-node addons/ttt_discord_bot/discord_bot
+node garrysmod/addons/ttt_discord_bot/discord_bot
 ```
+
+Use in Discord the same nickname as in steam.
+
+You are only muted when you are dead in TTT and in the Discord channel which is configured in the config.json
+
+
 ## Contributing
 
 1. Fork it (<https://github.com/yourname/yourproject/fork>)
