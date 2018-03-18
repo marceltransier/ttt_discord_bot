@@ -31,6 +31,7 @@ function update()
     db:query("truncate dead;update updated set time="..CurTime()*1000):start()
     return
   end
+  if (#player.GetAll() < 2) then return end
   if (#team.GetPlayers(TEAM_SPECTATOR) == 0) then return end
   local vals = ""
   for i, ply in ipairs(team.GetPlayers(TEAM_SPECTATOR)) do
