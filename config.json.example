@@ -1,0 +1,14 @@
+{
+  "discord": {
+    "token": "",
+    "guild": "",
+    "channel": ""
+  },
+  "mysql": {
+    "host": "localhost",
+    "user": "ttt_discord_bot",
+    "password": "",
+    "database": "db_ttt_discord_bot"
+  },
+  "refresh-interval": 100
+}

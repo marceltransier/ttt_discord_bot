@@ -5,7 +5,7 @@ const {log,error} = console;
 
 var guild, channel;
 var loggedin = false;
-var lastupdate;
+var lastqueryresult;
 
 //create discord client
 const client = new Discord.Client();
@@ -16,14 +16,19 @@ client.on('ready', () => {
 	guild = client.guilds.find('id',config.discord.guild);
 	channel = guild.channels.find('id',config.discord.channel);
 
-	loggedin = true;
+	loggedin = true; //use client.status?? TODO
 	update();
 });
-client.on('voiceStateUpdate',(oldMember,newMember) => {//when a user joins or leaves the voice channel, the update() function will be called
-	if (oldMember.voiceChannel != newMember.voiceChannel && (oldMember.voiceChannelID == config.discord.channel || newMember.voiceChannelID == config.discord.channel))
-		update()
+client.on('voiceStateUpdate',(oldMember,newMember) => {//player joins or leaves the ttt-channel
+	if (oldMember.voiceChannel != newMember.voiceChannel && (isMemberInVoiceChannel(oldMember) || isMemberInVoiceChannel(newMember))) {
+		updateDiscordTag(newMember);//update the discordtag to the steamid in the db
+		update(lastqueryresult);
+	}
 });
-
+client.on('guildMemberUpdate',(oldMember,newMember) => {
+	if (isMemberInVoiceChannel(newMember))
+		updateDiscordTag(newMember);//if somebody changes his discordtag while beeing in the ttt-voice-channel
+})
 
 //create mysql pool
 var pool = MySQL.createPool({
@@ -31,60 +36,43 @@ var pool = MySQL.createPool({
   user: config.mysql.user,
   password: config.mysql.password,
   database: config.mysql.database,
-	multipleStatements: true
+  multipleStatements: false
 });
 
-//create trables if not exists
-mysql(`	create table if not exists dead (nick varchar(255));
-				create table if not exists muted (id varchar(255));
-				create table if not exists updated (time bigint)`,res => {
-	mysql('select count(*) from updated',res => {
-		if (res[0]["count(*)"] == 0)
-			mysql('insert into updated(time) values('+Date.now()+')', () => checkDatabase());
-		else
-			checkDatabase();
-	});
+//create trable if not exists
+mysql('create table if not exists players (steamid varchar(255),discordid varchar(255) PRIMARY KEY,discordtag varchar(255),dead bool default 0,muted bool default 0)',res => {
+	checkDatabase();
 });
 function checkDatabase() {
-	mysql('select time from updated', res => {
-		if (res[0].time != lastupdate) {
-			lastupdate = res[0].time;
-			update();
+	mysql('select discordid,dead,muted from players', res => {
+		if (JSON.stringify(res) != JSON.stringify(lastqueryresult)) {
+			lastqueryresult = res;
+			update(lastqueryresult);
 		}
-		setTimeout(checkDatabase, 100);
+		setTimeout(checkDatabase, config['refresh-interval']);
 	});
 }
 
-function update() {//when the database has been updated or a user joined the channel, this function will check if the user should be muted or not
+function updateDiscordTag(member) {
+	mysql('insert into players(discordid,discordtag) values("'+member.id+'","'+member.user.tag+'") on duplicate key update discordtag="'+member.user.tag+'"');
+}
+
+function update(queryresult) {
 	if (!loggedin) return;
 
-	let members = channel.members.array();
+	for (i in queryresult) { //loop all players in db
+		let row = queryresult[i];
+		let member = guild.members.find('id',row.discordid);
+		if(member) {//if member is valid / exists
+			// log(member.nickname);
 
-	mysql('select nick from dead',resDead => {
-		mysql('select id from muted',resMuted => {
-			for (row in resMuted) {//unmute if not more in dead table or voice channel
-				let id = resMuted[row].id;
+			if (row.dead == 1 && isMemberInVoiceChannel(member)) //if member is dead and in the voice channel
+				muteMember(member,true);
+			if (row.muted == 1 && (row.dead == 0 || !isMemberInVoiceChannel(member))) //if member is muted and (not dead or not in the voice channel)
+				muteMember(member,false);
 
-				let user = guild.members.find('id',id);
-				let nick = user.nickname;
-				let isDead = contains(resDead,nick,"nick")
-				let isInChannel = contains(members,id,"id");
-
-				if (!isDead || !isInChannel) muteUser(user,false);
-			}
-			for (row in resDead) {//mute if in dead table and in voice channel
-				let nick = resDead[row].nick;
-
-				let user = guild.members.find('nickname',nick);
-				let isInChannel = contains(members,nick,"nickname");
-
-				if (isInChannel) muteUser(user,true);
-			}
-		});
-	})
-
-
-
+		}
+	}
 
 }
 
@@ -99,24 +87,12 @@ function mysql(sql,cb) {
 	});
 }
 
-function contains(array,entry,property=null) {
-	for (i in array) {
-		if (property) {
-			if (array[i][property] == entry) return true;
-		}else {
-			if (array[i] == entry) return true;
-		}
-	}
-	return false;
-}
+isMemberInVoiceChannel = (member) => member.voiceChannelID == config.discord.channel
 
 
-function muteUser(user,mute) {//mute / unmute user and insert or delete userid from muted table. the muted table is needed to check whether a user (regardless of his current nickname) is muted by this bot and should get unmutet when he quit the voice channel
-	user.setMute(mute,"dead players cant talk!")
+function muteMember(member,mute) {
+	member.setMute(mute,"dead players cant talk!")
 	.then(() => {
-		if (mute)
-			mysql('insert ignore into muted(id) values('+user.id+')');
-		else
-			mysql('delete from muted where id='+user.id);
+		mysql('update players set muted='+(mute?'1':'0')+' where discordid="'+member.id+'"');
 	}).catch(error);
 }
