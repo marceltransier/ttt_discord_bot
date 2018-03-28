@@ -14,7 +14,7 @@
 This is a powerful [discord bot](https://discord.js.org) that mutes dead players in [TTT](http://ttt.badking.net) (Garry's Mod - Trouble in Terrorist Town)
 
 ## Getting Started
-If you don't know how to install MySQL or Nodejs on your server, follow my [step-by-step guide on steam]()
+If you don't know how to install MySQL or Nodejs on your server, follow my [step-by-step guide on steam](http://steamcommunity.com/sharedfiles/filedetails/?id=1343501656)
 ### Prerequisites
 - You have to have allready installed a Garry's Mod Server with the TTT Gamemode
 - You must have MySQL and [Nodejs](https://nodejs.org) installed
