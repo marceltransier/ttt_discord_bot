@@ -7,7 +7,7 @@
 [![price](https://img.shields.io/badge/price-free-brightgreen.svg)](LICENSE)
 [![gmod-addon](https://img.shields.io/badge/gmod-addon-_.svg?colorB=1194EF)](https://wiki.garrysmod.com)
 [![discord-bot](https://img.shields.io/badge/discord-bot-_.svg?colorB=8C9EFF)](https://discord.js.org)
-![i-like-badges](https://img.shields.io/badge/worlds--coolest--color-green-_.svg?colorB=00FF00)
+![i-like-badges](https://img.shields.io/badge/world's_coolest_color-green-_.svg?colorB=00FF00)
 [![license](https://img.shields.io/github/license/marceltransier/ttt_discord_bot.svg)](LICENSE)
 
 
@@ -26,7 +26,7 @@ If you don't know how to install MySQL or Nodejs on your server, follow my [step
      git clone https://github.com/marceltransier/ttt_discord_bot.git
      npm install --prefix ./ttt_discord_bot/discord_bot/
      ```
-2. Rename config.json.example in config.json
+2. Rename the `config.json.example` in `config.json`
 
 3. Create Discord Bot, invite him to your server and paste the token in the config
 
@@ -49,7 +49,7 @@ If you don't know how to install MySQL or Nodejs on your server, follow my [step
 ### Usage
 
 - Start the bot by runing the node command with the `ttt_discord_bot/discord_bot/` directory
-- Connect your Steam Account with the bot by typing `!discord YourDiscordTag` in the ingame chat. E.g `!discord marcel.js#4402`
+- Connect your Steam Account with the bot by typing `!discord YourDiscordTag` in the ingame chat. E.g `!discord marcel.js#4402`. If you're lazy and there is nobody else with your discord discriminator (`#4402`) in the ttt channel, it's enough if you use this. E.g. `!discord 4402`
 - If you're **dead in Garry's Mod**, the **game-state is in progress**, you're **connected with discord** and you're in the **configured voice channel**, the bot will mute you. 
 
 ## Credits
