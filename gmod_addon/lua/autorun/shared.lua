@@ -66,9 +66,7 @@ end
 function mute(ply)
 	if (ids[ply:SteamID()]) then
 		if (!isMuted(ply)) then
-			print("make mute req")
 			GET("mute",{mute=true,id=ids[ply:SteamID()]},function(res)
-				print("made mute req")
 				if (res) then
 					PrintTable(res)
 					if (res.success) then
@@ -79,8 +77,6 @@ function mute(ply)
 					if (res.error) then
 						print(PREFIX.."Error: "..res.err)
 					end
-				else
-					print("res is empty")
 				end
 				
 			end)
