@@ -43,7 +43,7 @@ If you need step-by-step tutorial, follow my [guide on steam]()
 
 5. Add the addon to the garrysmod server
 
-   - Download the .gma file from [here]() and put it in the garrysmod/addons folder
+   - Download the .gma file from [here](https://github.com/marceltransier/ttt_discord_bot/releases/download/v2.0.0/ttt_discord_bot.gma) and put it in the garrysmod/addons folder
 
    - Or add the [workshop object]() to  the servers collection
 
