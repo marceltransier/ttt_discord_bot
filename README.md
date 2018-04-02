@@ -34,6 +34,8 @@ If you need step-by-step tutorial, follow my [guide on steam]()
    - if you don't know how to, follow [this guide](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
 
    - insert the bot token at `discord -> token` in the config.json
+   
+   - grant the bot the permissions to mute members
 
 4. Insert the Guild *(Server)* id and the channel id in the config
 
