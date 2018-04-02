@@ -43,7 +43,7 @@ If you need step-by-step tutorial, follow my [guide on steam]()
 
 5. Add the addon to the garrysmod server
 
-   - Move the gmod_addon folder to garrysmod/addons and name it suitable e.g. `ttt_discord_bot`
+   - Move the `gmod_addon` folder to garrysmod/addons and name it suitable e.g. `ttt_discord_bot`
 
    - Or add the [workshop object]() to  the servers collection
 
