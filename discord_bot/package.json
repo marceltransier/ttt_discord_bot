@@ -4,8 +4,7 @@
   "description": "the discord bot part of the ttt_discord_bot",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^11.3.2",
-    "mysql": "^2.15.0"
+    "discord.js": "^11.3.2"
   },
   "devDependencies": {},
   "scripts": {

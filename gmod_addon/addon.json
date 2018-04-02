@@ -2,10 +2,5 @@
 	"title"		:	"TTT Discord Bot",
 	"type"		:	"ServerContent",
 	"tags"		:	[ "roleplay", "realism" ],
-	"ignore"	:
-	[
-		".*",
-		"discord_bot/*",
-		"images/*"
-	]
+	"ignore"	: []
 }

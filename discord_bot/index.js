@@ -1,98 +1,128 @@
 const Discord = require('discord.js');
-const MySQL = require('mysql');
-const config = require('../config.json');
+const config = require('./config.json');
 const {log,error} = console;
+const http = require('http');
+const fs = require('fs');
+
+const PORT = 37405; //unused port and since now the OFFICIAL ttt_discord_bot port ;)
 
 var guild, channel;
-var loggedin = false;
-var lastqueryresult;
+
+var muted = {};
+
+var get = [];
 
 //create discord client
 const client = new Discord.Client();
 client.login(config.discord.token);
 
 client.on('ready', () => {
-	log('Bot is ready! :)');
+	log('Bot is ready to mute them all! :)');
 	guild = client.guilds.find('id',config.discord.guild);
 	channel = guild.channels.find('id',config.discord.channel);
-
-	loggedin = true; //use client.status?? TODO
-	update();
 });
-client.on('voiceStateUpdate',(oldMember,newMember) => {//player joins or leaves the ttt-channel
-	if (oldMember.voiceChannel != newMember.voiceChannel && (isMemberInVoiceChannel(oldMember) || isMemberInVoiceChannel(newMember))) {
-		updateDiscordTag(newMember);//update the discordtag to the steamid in the db
-		update(lastqueryresult);
-	}
-});
-client.on('guildMemberUpdate',(oldMember,newMember) => {
-	if (isMemberInVoiceChannel(newMember))
-		updateDiscordTag(newMember);//if somebody changes his discordtag while beeing in the ttt-voice-channel
-})
-
-//create mysql pool
-var pool = MySQL.createPool({
-  host: config.mysql.host,
-  user: config.mysql.user,
-  password: config.mysql.password,
-  database: config.mysql.database,
-  multipleStatements: false
-});
-
-//create trable if not exists
-mysql('create table if not exists players (steamid varchar(255),discordid varchar(255) PRIMARY KEY,discordtag varchar(255),dead bool default 0,muted bool default 0)',res => {
-	checkDatabase();
-});
-function checkDatabase() {
-	mysql('select discordid,dead,muted from players', res => {
-		if (JSON.stringify(res) != JSON.stringify(lastqueryresult)) {
-			lastqueryresult = res;
-			update(lastqueryresult);
-		}
-		setTimeout(checkDatabase, config['refresh-interval']);
-	});
-}
-
-function updateDiscordTag(member) {
-	mysql('insert into players(discordid,discordtag) values("'+member.id+'","'+member.user.tag+'") on duplicate key update discordtag="'+member.user.tag+'"');
-}
-
-function update(queryresult) {
-	if (!loggedin) return;
-
-	for (i in queryresult) { //loop all players in db
-		let row = queryresult[i];
-		let member = guild.members.find('id',row.discordid);
-		if(member) {//if member is valid / exists
-			// log(member.nickname);
-
-			if (row.dead == 1 && isMemberInVoiceChannel(member)) //if member is dead and in the voice channel
-				muteMember(member,true);
-			if (row.muted == 1 && (row.dead == 0 || !isMemberInVoiceChannel(member))) //if member is muted and (not dead or not in the voice channel)
-				muteMember(member,false);
-
-		}
-	}
-
-}
-
-//mysql query function
-function mysql(sql,cb) {
-	pool.getConnection(function(err, connection) {
-		connection.query(sql, function (error, results, fields) {
-			connection.release();
-			if (error) throw error;
-			if (cb) cb(results);
+client.on('voiceStateUpdate',(oldMember,newMember) => {//player leaves the ttt-channel
+	if (oldMember.voiceChannel != newMember.voiceChannel && isMemberInVoiceChannel(oldMember)) {
+		if (isMemberMutedByBot(newMember) && newMember.serverMute) newMember.setMute(false).then(()=>{
+			setMemberMutedByBot(newMember,false);
 		});
-	});
+	}
+});
+
+isMemberInVoiceChannel = (member) => member.voiceChannelID == config.discord.channel;
+isMemberMutedByBot = (member) => muted[member] == true;
+setMemberMutedByBot = (member,set=true) => muted[member] = set;
+
+
+get['connect'] = (params,ret) => {
+	let tag = params.tag;
+
+	let found = guild.members.filterArray(val => val.user.tag.match(new RegExp('.*'+tag+'.*')));
+
+	if (found.length > 1) {
+		ret({
+			answer: 1 //pls specify
+		});
+	}else if (found.length < 1) {
+		ret({
+			answer: 0 //no found
+		});
+	}else {
+		ret({
+			tag: found[0].user.tag,
+			id: found[0].id
+		});
+	}	
+};
+
+get['mute'] = (params,ret) => {
+	let id = params.id;
+	let mute = params.mute
+
+	if (typeof id !== 'string' || typeof mute !== 'boolean') {
+		ret();
+		return;
+	}
+
+	let member = guild.members.find('id', id);
+
+	if (member) {
+
+		if (isMemberInVoiceChannel(member)) {
+			if (!member.serverMute && mute) {
+				member.setMute(true,"dead players can't talk!").then(()=>{
+					setMemberMutedByBot(member);
+					ret({
+						success: true
+					});
+				}).catch((err)=>{
+					ret({
+						success: false,
+						error: err
+					});
+				});
+			}
+			if (member.serverMute && !mute) {
+				member.setMute(false).then(()=>{
+					setMemberMutedByBot(member,false);
+					ret({
+						success: true
+					});
+				}).catch((err)=>{
+					ret({
+						success: false,
+						error: err
+					});
+				});
+			}
+		}
+		else {
+			ret();
+		}
+		
+	}else {
+		ret({
+			success: false,
+			err: 'member not found!' //TODO lua: remove from ids table + file
+		});
+	}	
+
 }
 
-isMemberInVoiceChannel = (member) => member.voiceChannelID == config.discord.channel
 
-
-function muteMember(member,mute) {
-	member.setMute(mute,"dead players cant talk!")
-	.then(() => {
-		mysql('update players set muted='+(mute?'1':'0')+' where discordid="'+member.id+'"');
-	}).catch(error);
-}
+http.createServer((req,res)=>{
+	if (typeof req.headers.params === 'string' && typeof req.headers.req === 'string' && typeof get[req.headers.req] === 'function') {
+		try {
+			let params = JSON.parse(req.headers.params);
+			get[req.headers.req](params,(ret)=>res.end(JSON.stringify(ret)));
+		}catch(e) {
+			res.end('no valid JSON in params');
+		}
+	}else
+		res.end();
+}).listen({
+	port: PORT,
+	host: 'localhost'
+},()=>{
+	log('http interface is ready :)')
+});
