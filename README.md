@@ -13,7 +13,7 @@
 This is a powerful [discord bot](https://discord.js.org) that mutes dead players in [TTT](http://ttt.badking.net) (Garry's Mod - Trouble in Terrorist Town)
 
 ## Getting Started
-If you need a step-by-step tutorial, follow my [guide at steam]()
+If you need a step-by-step tutorial, follow my [guide at steam](http://steamcommunity.com/sharedfiles/filedetails/?id=1351369388)
 
 ### Prerequisites
 - You have to have allready installed a Garry's Mod Server with the TTT Gamemode
