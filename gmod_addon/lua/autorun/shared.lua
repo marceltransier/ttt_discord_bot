@@ -1,6 +1,6 @@
 AddCSLuaFile()
 resource.AddFile("materials/mute-icon.png")
-if (CLIENT) then 
+if (CLIENT) then
 
 	local drawMute = false
 	local muteIcon = Material("materials/mute-icon.png")
@@ -17,13 +17,14 @@ if (CLIENT) then
 	end )
 
 
-	return 
+	return
 end
 util.AddNetworkString("drawMute")
 
 PORT = 37405
 PREFIX = "[TTT Discord Bot] "
 FILEPATH = "ttt_discord_bot.dat"
+TRIES = 3
 
 muted = {}
 
@@ -38,13 +39,15 @@ function saveIDs()
 end
 
 
-function GET(req,params,cb)
+function GET(req,params,cb,tries)
 	http.Fetch("http://localhost:"..PORT,function(res)
 		print(res)
 		cb(util.JSONToTable(res))
 	end,function(err)
 		print(PREFIX.."Request to bot failed. Is the bot running?")
 		print("Err: "..err)
+		if (!tries) then tries = TRIES end
+		if (tries != 0) then GET(req,params,cb, tries-1) end
 	end,{req=req,params=util.TableToJSON(params)})
 end
 
@@ -54,6 +57,7 @@ function sendClientIconInfo(ply,mute)
 	net.Send(ply)
 end
 
+--[[
 function isMuted(ply)
 	for i,v in ipairs(muted) do
 		if ply == v then return
@@ -61,6 +65,9 @@ function isMuted(ply)
 		end
 	end
 	return false
+end]]
+function isMuted(ply)
+	return muted[ply]
 end
 
 function mute(ply)
@@ -72,13 +79,13 @@ function mute(ply)
 					if (res.success) then
 						ply:PrintMessage(HUD_PRINTCENTER,"You're muted in discord!")
 						sendClientIconInfo(ply,true)
-						table.insert(muted,ply)
+						muted[ply] = true
 					end
 					if (res.error) then
 						print(PREFIX.."Error: "..res.err)
 					end
 				end
-				
+
 			end)
 		end
 	end
@@ -92,11 +99,7 @@ function unmute(ply)
 					if (res.success) then
 						ply:PrintMessage(HUD_PRINTCENTER,"You're no longer muted in discord!")
 						sendClientIconInfo(ply,false)
-						for i,v in ipairs(muted) do
-							if v == ply then
-								table.remove(muted,i)
-							end
-						end
+						muted[ply] = false
 					end
 					if (res.error) then
 						print(PREFIX.."Error: "..res.err)
@@ -105,8 +108,8 @@ function unmute(ply)
 			end
 		end
 	else
-		for i,ply in ipairs(muted) do
-			unmute(ply)
+		for ply,val in pairs(muted) do
+			if val then unmute(ply) end
 		end
 	end
 end
@@ -144,7 +147,7 @@ hook.Add("ShutDown","ttt_discord_bot_ShutDown", function()
   unmute()
 end)
 hook.Add("TTTEndRound", "ttt_discord_bot_TTTEndRound", function()
-  unmute()
+	timer.Simple(1,function() unmute() end)
 end)
 hook.Add("TTTBeginRound", "ttt_discord_bot_TTTBeginRound", function()--in case of round-restart via command
   unmute()
@@ -154,4 +157,3 @@ hook.Add("PostPlayerDeath", "ttt_discord_bot_PostPlayerDeath", function(ply)
 		mute(ply)
 	end
 end)
-
