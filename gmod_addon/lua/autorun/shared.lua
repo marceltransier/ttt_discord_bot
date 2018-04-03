@@ -41,7 +41,7 @@ end
 
 function GET(req,params,cb,tries)
 	http.Fetch("http://localhost:"..PORT,function(res)
-		print(res)
+		--print(res)
 		cb(util.JSONToTable(res))
 	end,function(err)
 		print(PREFIX.."Request to bot failed. Is the bot running?")
@@ -75,7 +75,7 @@ function mute(ply)
 		if (!isMuted(ply)) then
 			GET("mute",{mute=true,id=ids[ply:SteamID()]},function(res)
 				if (res) then
-					PrintTable(res)
+					--PrintTable(res)
 					if (res.success) then
 						ply:PrintMessage(HUD_PRINTCENTER,"You're muted in discord!")
 						sendClientIconInfo(ply,true)
