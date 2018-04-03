@@ -147,7 +147,7 @@ hook.Add("ShutDown","ttt_discord_bot_ShutDown", function()
   unmute()
 end)
 hook.Add("TTTEndRound", "ttt_discord_bot_TTTEndRound", function()
-	timer.Simple(1,function() unmute() end)
+	timer.Simple(0.1,function() unmute() end)
 end)
 hook.Add("TTTBeginRound", "ttt_discord_bot_TTTBeginRound", function()--in case of round-restart via command
   unmute()
