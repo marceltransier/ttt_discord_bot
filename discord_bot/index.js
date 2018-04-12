@@ -33,9 +33,13 @@ isMemberInVoiceChannel = (member) => member.voiceChannelID == config.discord.cha
 isMemberMutedByBot = (member) => muted[member] == true;
 setMemberMutedByBot = (member,set=true) => muted[member] = set;
 
-
 get['connect'] = (params,ret) => {
-	let tag = params.tag;
+	let tag_utf8 = params.tag.split(" ");
+	let tag = "";
+	
+	tag_utf8.forEach(function(e) {
+		tag = tag+String.fromCharCode(e);
+	});
 
 	let found = guild.members.filterArray(val => val.user.tag.match(new RegExp('.*'+tag+'.*')));
 
