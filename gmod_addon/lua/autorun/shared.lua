@@ -97,7 +97,9 @@ function unmute(ply)
 			if (isMuted(ply)) then
 				GET("mute",{mute=false,id=ids[ply:SteamID()]},function(res)
 					if (res.success) then
-						ply:PrintMessage(HUD_PRINTCENTER,"You're no longer muted in discord!")
+						if (ply) then
+							ply:PrintMessage(HUD_PRINTCENTER,"You're no longer muted in discord!")
+						end
 						sendClientIconInfo(ply,false)
 						muted[ply] = false
 					end

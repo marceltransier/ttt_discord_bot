@@ -18,8 +18,10 @@ client.login(config.discord.token);
 
 client.on('ready', () => {
 	log('Bot is ready to mute them all! :)');
-	guild = client.guilds.find('id',config.discord.guild);
-	channel = guild.channels.find('id',config.discord.channel);
+	guild = client.guilds.get(config.discord.guild);
+//	guild = client.guilds.find('id',config.discord.guild);
+	channel = guild.channels.get(config.discord.channel);
+//	channel = guild.channels.find('id',config.discord.channel);
 });
 client.on('voiceStateUpdate',(oldMember,newMember) => {//player leaves the ttt-channel
 	if (oldMember.voiceChannel != newMember.voiceChannel && isMemberInVoiceChannel(oldMember)) {
@@ -42,7 +44,6 @@ get['connect'] = (params,ret) => {
 	});
 
 	let found = guild.members.filterArray(val => val.user.tag.match(new RegExp('.*'+tag+'.*')));
-
 	if (found.length > 1) {
 		ret({
 			answer: 1 //pls specify
@@ -62,13 +63,13 @@ get['connect'] = (params,ret) => {
 get['mute'] = (params,ret) => {
 	let id = params.id;
 	let mute = params.mute
-
 	if (typeof id !== 'string' || typeof mute !== 'boolean') {
 		ret();
 		return;
 	}
-
-	let member = guild.members.find('id', id);
+	log("Muted: " + id);
+	//let member = guild.members.find('id', id);
+	let member = guild.members.find(user => user.id === id);
 
 	if (member) {
 
@@ -126,7 +127,7 @@ http.createServer((req,res)=>{
 		res.end();
 }).listen({
 	port: PORT,
-	host: 'localhost'
+	host: 'LOCALHOST'
 },()=>{
 	log('http interface is ready :)')
 });
