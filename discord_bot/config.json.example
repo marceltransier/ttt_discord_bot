@@ -3,5 +3,8 @@
     "token": "",
     "guild": "",
     "channel": ""
+  },
+  "server": {
+    "port": "37405"
   }
 }

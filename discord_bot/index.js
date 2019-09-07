@@ -4,7 +4,7 @@ const {log,error} = console;
 const http = require('http');
 const fs = require('fs');
 
-const PORT = 37405; //unused port and since now the OFFICIAL ttt_discord_bot port ;)
+const PORT = config.server.port; //unused port and since now the OFFICIAL ttt_discord_bot port ;)
 
 var guild, channel;
 
@@ -38,7 +38,7 @@ setMemberMutedByBot = (member,set=true) => muted[member] = set;
 get['connect'] = (params,ret) => {
 	let tag_utf8 = params.tag.split(" ");
 	let tag = "";
-	
+
 	tag_utf8.forEach(function(e) {
 		tag = tag+String.fromCharCode(e);
 	});
@@ -57,7 +57,7 @@ get['connect'] = (params,ret) => {
 			tag: found[0].user.tag,
 			id: found[0].id
 		});
-	}	
+	}
 };
 
 get['mute'] = (params,ret) => {
@@ -104,13 +104,13 @@ get['mute'] = (params,ret) => {
 		else {
 			ret();
 		}
-		
+
 	}else {
 		ret({
 			success: false,
 			err: 'member not found!' //TODO lua: remove from ids table + file
 		});
-	}	
+	}
 
 }
 
@@ -126,8 +126,7 @@ http.createServer((req,res)=>{
 	}else
 		res.end();
 }).listen({
-	port: PORT,
-	host: 'LOCALHOST'
+	port: PORT
 },()=>{
 	log('http interface is ready :)')
 });
