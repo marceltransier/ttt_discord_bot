@@ -118,6 +118,22 @@ function unmute(ply)
 	end
 end
 
+function commonRoundState()
+  if gmod.GetGamemode().Name == "Trouble in Terrorist Town" or
+     gmod.GetGamemode().Name == "TTT2 (Advanced Update)" then
+    -- Round state 3 => Game is running
+    return ((GetRoundState() == 3) and 1 or 0)
+  end
+
+  if gmod.GetGamemode().Name == "Murder" then
+    -- Round state 1 => Game is running
+    return ((gmod.GetGamemode():GetRound() == 1) and 1 or 0)
+  end
+
+  -- Round state could not be determined
+  return -1
+end
+
 hook.Add("PlayerSay", "ttt_discord_bot_PlayerSay", function(ply,msg)
   if (string.sub(msg,1,9) != '!discord ') then return end
   tag = string.sub(msg,10)
@@ -161,8 +177,14 @@ end)
 hook.Add("TTTBeginRound", "ttt_discord_bot_TTTBeginRound", function()--in case of round-restart via command
   unmute()
 end)
+hook.Add("OnEndRound", "ttt_discord_bot_OnEndRound", function()
+        timer.Simple(0.1,function() unmute() end)
+end)
+hook.Add("OnStartRound", "ttt_discord_bot_OnStartRound", function()
+  unmute()
+end)
 hook.Add("PostPlayerDeath", "ttt_discord_bot_PostPlayerDeath", function(ply)
-	if (GetRoundState() == 3) then
+	if (commonRoundState() == 1) then
 		mute(ply)
 	end
 end)
