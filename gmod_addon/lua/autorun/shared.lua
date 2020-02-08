@@ -20,7 +20,7 @@ if (CLIENT) then
 	return
 end
 util.AddNetworkString("drawMute")
-CreateConVar("discordbot_host", "localhost", FCVAR_ARCHIVE, "Sets the node server address.")
+CreateConVar("discordbot_host", "127-0-0-1.org.uk", FCVAR_ARCHIVE, "Sets the node server address.")
 CreateConVar("discordbot_port", "37405", FCVAR_ARCHIVE, "Sets the node server port.")
 CreateConVar("discordbot_name", "TTT Discord Bot", FCVAR_ARCHIVE, "Sets the Plugin Prefix for helpermessages.") --The name which will be displayed in front of any Message
 
