@@ -99,13 +99,13 @@ get['mute'] = (params,ret) => {
 						error: err
 					});
 				});
-            }
-            else {
-                // Already in requested state
-                ret({
+			}
+			else {
+				// Already in requested state
+				ret({
 					success: true,
 				});
-            }
+			}
 		}
 		else {
 			ret();
