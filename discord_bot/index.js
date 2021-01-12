@@ -87,7 +87,7 @@ get['mute'] = (params,ret) => {
 					});
 				});
 			}
-			else if (member.serverMute && !mute) {
+			else if (member.serverMute && !mute && isMemberMutedByBot(member)) {
 				member.setMute(false).then(()=>{
 					setMemberMutedByBot(member,false);
 					ret({
