@@ -1,3 +1,14 @@
+# hellohello?
+
+this project is kinda dead bc the maintainer (me lol) doesnt maintain anything unfortunatly..
+## but dont despair!
+there is a [fork with even more features like a gui and stuff. and better code](https://github.com/manix84/discord_gmod_bot)!
+
+https://github.com/manix84/discord_gmod_bot
+
+thats why open source is awesome :) thx manix84 for continuing this project!
+
+
 # TTT Discord Bot ![Icon](https://raw.githubusercontent.com/marceltransier/ttt_discord_bot/master/images/icon/icon_64x.png)
 
 >Dead players can't speak!
