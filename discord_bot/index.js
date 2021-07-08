@@ -87,7 +87,7 @@ get['mute'] = (params,ret) => {
 					});
 				});
 			}
-			if (member.serverMute && !mute) {
+			else if (member.serverMute && !mute && isMemberMutedByBot(member)) {
 				member.setMute(false).then(()=>{
 					setMemberMutedByBot(member,false);
 					ret({
@@ -98,6 +98,12 @@ get['mute'] = (params,ret) => {
 						success: false,
 						error: err
 					});
+				});
+			}
+			else {
+				// Already in requested state
+				ret({
+					success: true,
 				});
 			}
 		}
@@ -114,8 +120,7 @@ get['mute'] = (params,ret) => {
 
 }
 
-
-http.createServer((req,res)=>{
+var srvr = http.createServer((req,res)=>{
 	if (typeof req.headers.params === 'string' && typeof req.headers.req === 'string' && typeof get[req.headers.req] === 'function') {
 		try {
 			let params = JSON.parse(req.headers.params);
@@ -125,7 +130,10 @@ http.createServer((req,res)=>{
 		}
 	}else
 		res.end();
-}).listen({
+});
+
+srvr.timeout = 1000;
+srvr.listen({
 	port: PORT
 },()=>{
 	log('http interface is ready :)')
